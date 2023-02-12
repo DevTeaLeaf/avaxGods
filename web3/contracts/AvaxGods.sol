@@ -85,6 +85,14 @@ contract AVAXGods is ERC1155, Ownable, ERC1155Supply {
         return players;
     }
 
+    function isPlayerToken(address addr) public view returns (bool) {
+        if(playerTokenInfo[addr] == 0) {
+        return false;
+        } else {
+        return true;
+        }
+    }
+
     function getPlayerToken(address addr) public view returns (GameToken memory) {
         require(isPlayerToken(addr), "Game token doesn't exist!");
         return gameTokens[playerTokenInfo[addr]];
@@ -169,7 +177,7 @@ contract AVAXGods is ERC1155, Ownable, ERC1155Supply {
     }
 
     /// @dev internal function to create a new Battle Card
-    function _createGameToken(string memory _name) internal returns (GmeToken memory) {
+    function _createGameToken(string memory _name) internal returns (GameToken memory) {
         uint randAttackStrength = _createRandomNum(MAX_ATTACK_DEFEND_STRENGTH, msg.sender);
         uint randDefenseStrength = MAX_ATTACK_DEFEND_STRENGTH - randAttackStrength;
 
@@ -217,7 +225,7 @@ contract AVAXGods is ERC1155, Ownable, ERC1155Supply {
         require(isPlayer(msg.sender), "Please Register Player First"); // Require that the player is registered
         require(!isBattle(_name), "Battle already exists!"); // Require battle with same name should not exist
 
-        bytes32 battleHash = keccac256(abi.encode(_name));
+        bytes32 battleHash = keccak256(abi.encode(_name));
 
         Battle memory _battle = Battle(
             BattleStatus.PENDING, // Battle pending
